@@ -10,6 +10,7 @@ import AppContext from './appContext';
 import FoodDetails from '../screens/FoodDetails';
 import OrderNow from '../screens/OrderNow';
 import Profile from '../screens/Profile';
+import HistoryOrderList from '../screens/HistoryOrderList';
 
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -46,7 +47,7 @@ const reducer = (state,action) => {
 
 
     case "reset" : 
-      return {...state,selectedItemCount:0}
+      return {totalCount:0,totalPrice:0,orderList:{}}
   }
 
 }
@@ -79,6 +80,7 @@ const MainRoute = () => {
         <Stack.Screen name='profile' component={Profile} />
         <Stack.Screen name='myorders' component={MyOrders} />
         <Stack.Screen name='myhistory' component={MyHistory} />
+        <Stack.Screen name='historyorderlist' component={HistoryOrderList} options={{animation:"fade_from_bottom"}} />
        </Stack.Navigator>
     </NavigationContainer>
     </AppContext.Provider>

@@ -49,7 +49,7 @@ const HomeScreens = ({navigation}) => {
 
 
   const onAllFood = useCallback( async () => {
-    console.log("All Food")
+    // console.log("All Food")
     setBtnDisable(false);
     setShow(false)
     const data = await getAllData() ;
@@ -58,7 +58,7 @@ const HomeScreens = ({navigation}) => {
   },[])
 
   const onFood = useCallback(async () => {
-    console.log("Food")
+    // console.log("Food")
     setBtnDisable(true)
     setShow(false)
     const data = await specificData("curry");
@@ -68,7 +68,7 @@ const HomeScreens = ({navigation}) => {
 
   const onJuice = useCallback(async () => {
     setBtnDisable(true)
-    console.log("Juice")
+    // console.log("Juice")
     setShow(false)
     const data = await specificData("juice");
     setFoodList(data);
@@ -77,7 +77,7 @@ const HomeScreens = ({navigation}) => {
 
   const onSnack = useCallback(async () => {
     setBtnDisable(true)
-    console.log("snack")
+    // console.log("snack")
     setShow(false)
     const data = await specificData("snack");
     setFoodList(data);
@@ -125,10 +125,12 @@ const HomeScreens = ({navigation}) => {
       //  console.log(items.length , " is original length")
        
       }else{
-        console.log("Not exit")
+        return ;
       }
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      return ;
+    })
   }
 
 
@@ -169,7 +171,7 @@ const HomeScreens = ({navigation}) => {
     <Animated.View style={styles.todaySpecialContainer} entering={FadeInDown.duration(600)} >
       <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingRight:10}} >
       <Text style={{fontFamily:"lucky",fontSize:16,color:"#ff7700ff",paddingVertical:5,letterSpacing:3}} > Today Specials </Text>
-      <TouchableOpacity onPress={()=> navigation.navigate("todayspecial")} activeOpacity={0.7} >
+      <TouchableOpacity  activeOpacity={0.7} onPress={() => navigation.navigate("todayspecial")} >
         <Text style={{color:"#ff7700ff",fontFamily:"lucky",fontSize:14}} >See All</Text>
       </TouchableOpacity>
       </View>

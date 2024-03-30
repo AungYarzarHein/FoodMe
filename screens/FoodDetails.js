@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Text, View,StyleSheet,StatusBar, BackHandler, Image, Dimensions, ActivityIndicator, TouchableOpacity, Pressable } from 'react-native';
 import foodOne from "./images/one.png";
 import { useSafeAreaFrame } from 'react-native-safe-area-context';
-import Animated, { BounceIn, FadeIn, FadeInDown, FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
+import Animated, { BounceIn, FadeIn, FadeInDown, FadeInLeft, FadeInRight, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import AntDesign from "react-native-vector-icons/AntDesign"
 import PriceAndNumber from '../screenComponent/PriceAndNumber';
 import AppContext from '../routes/appContext';
@@ -55,7 +55,8 @@ const FoodDetails = ({route,navigation}) => {
         name,
         totalPrice:price*count,
         totalCount:count,
-        id
+        id,
+        imageUrl
       }
       dispatch({type:"updateItem",value:{realCount,realPrice,orderItem,id}})
 
@@ -64,7 +65,8 @@ const FoodDetails = ({route,navigation}) => {
         name,
         totalPrice:price*count,
         totalCount:count,
-        id
+        id,
+        imageUrl
       }
       dispatch({type:"addItemToCart",value:orderItem})
     }
@@ -114,7 +116,7 @@ const FoodDetails = ({route,navigation}) => {
   return (
     <View style={styles.container} >
       <View style={styles.headerContainer} >
-    <Animated.Image source={{uri:imageUrl}} style={{width:itemWidth,height:itemWidth}} entering={FadeInUp.duration(300).delay(300)} />
+    <Animated.Image source={{uri:imageUrl}} style={{width:itemWidth,height:itemWidth}} entering={FadeInLeft.duration(300)}   />
     <Animated.Text style={styles.foodName} entering={FadeInLeft.duration(500)} > {name} </Animated.Text>
     <Animated.Text style={styles.price} entering={FadeInRight.duration(500)} > {price} kyats </Animated.Text>
 
@@ -129,7 +131,7 @@ const FoodDetails = ({route,navigation}) => {
        </View>
 
        <View style={styles.btnContainer} >
-         <AnimatedBtn entering={FadeInUp.duration(600)} style={styles.btn} onPress={onAddToCart}  activeOpacity={0.8} >
+         <AnimatedBtn entering={FadeInUp.duration(600)} style={styles.btn} onPress={onAddToCart}  activeOpacity={1} >
           {
             show ? <ActivityIndicator size={20} color={"red"} /> : <AntDesign name="shoppingcart" size={24} color="#fff" /> 
           }
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
       // borderColor:"#ffffff66"
     },
     foodName:{
-      fontFamily:"tangu",
+      fontFamily:"sakar",
       fontSize:24,
       color:"#fff",
       // paddingBottom:10

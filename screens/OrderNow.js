@@ -2,6 +2,9 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { ActivityIndicator, BackHandler, Dimensions, FlatList, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import AppContext from '../routes/appContext';
 import OrderListItem from '../screenComponent/OrderListItem';
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
+
 
 const { width, height } = Dimensions.get("window") ;
 
@@ -10,6 +13,8 @@ const OrderNow = ({navigation}) => {
   // const orderList = userState.orderList ;
   const [loading,setLoading] = useState(true);
   const [data,setData] = useState(Object.values(userState.orderList));
+  const appTimestamp = new Date().getTime();
+  const [btnLoading,setBtnLoading] = useState(false);
 
 
     // handle backpress
@@ -23,6 +28,11 @@ const OrderNow = ({navigation}) => {
 
   const onDeleteItem = useCallback((item) => {
     const newOrderList = data.filter((obj) => obj.id != item.id) ;
+    // console.log(data.findIndex(obj => obj.id == item.id))
+    // const index = data.findIndex(obj => obj.id == item.id);
+    // data.splice(index,1);
+    // console.log(data.length)
+    // setData(data);
     dispatch({type:"deleteItem",value:item})
       setData(newOrderList);
     // console.log(item, " is deleted");
@@ -33,11 +43,32 @@ const OrderNow = ({navigation}) => {
 useEffect(() => { 
   setTimeout(() => {
     setLoading(false)
+    // console.log(auth().currentUser)
   },500);
  } , [])
 
  const onOrderNow = () => {
-  console.log(userState)
+  const docName = auth().currentUser.uid+appTimestamp ;
+  setBtnLoading(true);
+  // console.log(userState);
+  const { totalPrice , totalCount , orderList } = userState ;
+  const data = {
+    totalCount,
+    totalPrice,
+    orderList,
+    user:auth().currentUser.uid
+  }
+firestore().collection("orders").doc(docName).set(data)
+.then((success) => {
+  dispatch({type:"reset"});
+  setBtnLoading(false);
+  navigation.goBack();
+})
+.catch(err => {
+  setBtnLoading(false);
+  return;
+})
+  
  }
 
 
@@ -57,19 +88,17 @@ useEffect(() => {
       </View>
     
 
-        <FlatList 
-        keyExtractor={(item,index) => `${item.name}${index}` }
-        data={data}
-        showsVerticalScrollIndicator={false}
-        renderItem={({item,index}) => {
-          
-          return(
-            <OrderListItem obj={item} onDeleteItem={()=> onDeleteItem(item)} index={index} />
-          )
-        }}
-        contentContainerStyle={{paddingBottom:30,paddingHorizontal:10}}
-        
-        />
+      
+
+        <ScrollView style={{flex:1}} contentContainerStyle={{paddingHorizontal:5}} showsVerticalScrollIndicator={false} >
+        {
+          data.map((item,index) => {
+            return (
+              <OrderListItem key={item.name} onDeleteItem={() => onDeleteItem(item)} index={index} obj={item} />
+            )
+          })
+        }
+        </ScrollView>
 
 
         <View style={styles.totalCost} >
@@ -78,6 +107,9 @@ useEffect(() => {
         </View>
 
         <TouchableOpacity style={styles.orderNowBtn} onPress={onOrderNow} >
+         {
+          btnLoading ?  <ActivityIndicator size={16} /> : null
+         }
           <Text style={styles.orderNowBtnText} > Order Now </Text>
         </TouchableOpacity>
       {/* </ScrollView> */}
@@ -92,24 +124,27 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         backgroundColor:"#f2f2f2",
-        paddingTop:StatusBar.currentHeight
+        paddingTop:StatusBar.currentHeight,
+        // backgroundColor:"red"
     },
     header:{
-        paddingTop:20,
+        padding:15,
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
+        // backgroundColor:"gold"
     },
     headerText:{
-      fontFamily:"lucky",
+      fontFamily:"tile",
       fontSize:22,
       color:"#8cbecbff"
     },
     totalCost:{
       flexDirection:"row",
-      paddingVertical:15,
+      paddingVertical:10,
       paddingHorizontal:10,
       justifyContent:"center",
-      gap:20
+      gap:20,
+      // backgroundColor:"red"
     },
     text:{
       fontFamily:"dinbo",
@@ -122,21 +157,24 @@ const styles = StyleSheet.create({
       color:"#ff7700ff"
     },
     orderNowBtn:{
-      width:width*0.7,
+      width:width*0.6,
       backgroundColor:"#8cbecbff",
+      flexDirection:"row",
       alignSelf:"center",
-      marginVertical:20,
+      justifyContent:"center",
+      marginBottom:20,
       borderRadius:10,
-      borderWidth:3,
+      borderWidth:2,
       borderColor:"#8cbecb33"
     },
     orderNowBtnText:{
-      fontFamily:"lucky",
+      fontFamily:"tile",
       fontSize:20,
       color:"#fff",
       paddingVertical:10,
       textAlign:"center",
-      letterSpacing:1
+      letterSpacing:1,
+      paddingLeft:5
     }
 })
 
