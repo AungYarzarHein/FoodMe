@@ -7,8 +7,8 @@
 
 
 ## Screenshots
-![Home Screen](./screens/images/home.jpg)
-![Food Detail](./screens/images/foodDetail.jpg)
+![preview](./screens/images/preview.png)
+
 
 
 ## This is  a demo project of online food ordering app 
